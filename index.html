@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SumTrack</title>
+  <link rel="icon" type="image/png" href="/brand_assets/SUMTRACK LOGO ONLY.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            montserrat: ['Montserrat', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            teal: {
+              950: '#041F1F',
+              900: '#082E2E',
+              800: '#0C4A4E',
+              700: '#0F5E63',
+              600: '#137378',
+              500: '#17888E',
+              400: '#2BA3A9',
+              300: '#5BBFC4',
+              200: '#93D6DA',
+            },
+            ember: {
+              700: '#A83210',
+              600: '#C43D14',
+              500: '#D94F1E',
+              400: '#E8662F',
+              300: '#F28B5A',
+            },
+            brand: {
+              red: '#E53935',
+              amber: '#F0A818',
+            },
+            slate: {
+              950: '#0A0E17',
+              900: '#0F172A',
+              800: '#1E293B',
+              700: '#334155',
+              600: '#475569',
+              500: '#64748B',
+              400: '#94A3B8',
+              300: '#CBD5E1',
+              200: '#E2E8F0',
+              100: '#F1F5F9',
+              50: '#F8FAFC',
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture */
+    .grain::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Grow-in reveal */
+    .grow-in {
+      opacity: 0;
+      transform: translateY(32px) scale(0.96);
+      filter: blur(2px);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), filter 0.65s ease;
+    }
+    .grow-in.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+    .grow-in:nth-child(1) { transition-delay: 0s; }
+    .grow-in:nth-child(2) { transition-delay: 0.08s; }
+    .grow-in:nth-child(3) { transition-delay: 0.16s; }
+    .grow-in:nth-child(4) { transition-delay: 0.24s; }
+    .grow-in:nth-child(5) { transition-delay: 0.32s; }
+    .grow-in:nth-child(6) { transition-delay: 0.4s; }
+    .grow-in:nth-child(7) { transition-delay: 0.48s; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      filter: blur(1px);
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
+
+    /* Hero entrance */
+    @keyframes hero-grow {
+      0% { opacity: 0; transform: scale(0.85) translateY(20px); filter: blur(6px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+    }
+    .hero-animate { animation: hero-grow 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .hero-animate-delay { animation: hero-grow 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; opacity: 0; }
+    .hero-animate-delay-2 { animation: hero-grow 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
+
+    /* Glowing CTA */
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(217,79,30,0.3), 0 0 40px rgba(217,79,30,0.1); }
+      50% { box-shadow: 0 0 30px rgba(217,79,30,0.5), 0 0 60px rgba(217,79,30,0.2); }
+    }
+    .glow-btn {
+      animation: glow-pulse 3s ease-in-out infinite;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    }
+    .glow-btn:hover { transform: translateY(-2px); }
+    .glow-btn:active { transform: translateY(1px); opacity: 0.9; }
+    .glow-btn:focus-visible { outline: 2px solid #E8662F; outline-offset: 3px; }
+    .glow-btn:hover .arrow { transform: translateX(4px); }
+    .arrow { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* Button states */
+    .btn {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); opacity: 0.9; }
+    .btn:focus-visible { outline: 2px solid #F0A818; outline-offset: 3px; }
+
+    .nav-link {
+      transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+    .nav-link:hover { opacity: 0.8; }
+    .nav-link:active { transform: scale(0.97); }
+    .nav-link:focus-visible { outline: 2px solid #F0A818; outline-offset: 2px; border-radius: 4px; }
+
+    /* Card hover */
+    .card-lift {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 2px 8px rgba(240,168,24,0.08);
+    }
+
+    /* Marquee */
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-track {
+      animation: marquee 25s linear infinite;
+    }
+
+    /* Bento grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: auto;
+      gap: 1.25rem;
+    }
+    .bento-wide { grid-column: span 2; }
+    .bento-full { grid-column: 1 / -1; }
+    @media (max-width: 1023px) {
+      .bento-grid { grid-template-columns: repeat(2, 1fr); }
+      .bento-wide { grid-column: span 2; }
+    }
+    @media (max-width: 639px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-wide { grid-column: span 1; }
+    }
+
+    /* Map */
+    .map-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(13,79,79,0.1);
+    }
+    @media (min-width: 640px) {
+      .map-wrap { border-radius: 20px; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0F172A; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Float orbs */
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(15px, -20px) scale(1.04); }
+      66% { transform: translate(-10px, 12px) scale(0.96); }
+    }
+    .float-orb { animation: float 10s ease-in-out infinite; }
+    .float-orb-slow { animation: float 14s ease-in-out infinite reverse; }
+  </style>
+</head>
+
+<body class="bg-slate-950 font-inter text-slate-300 antialiased overflow-x-hidden" style="line-height: 1.7;">
+
+  <!-- ===== SVG Icons ===== -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+    </symbol>
+    <symbol id="i-calculator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>
+    </symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M19.967 17.484A4 4 0 0 1 18 18"/>
+    </symbol>
+    <symbol id="i-trending" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+    </symbol>
+    <symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="i-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+    </symbol>
+    <symbol id="i-file-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/>
+    </symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>
+    </symbol>
+    <symbol id="i-book-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+    </symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+    </symbol>
+  </svg>
+
+
+  <!-- ===== STICKY NAV ===== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06]" style="backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); background: rgba(10, 14, 23, 0.75);">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between h-14 sm:h-16">
+      <a href="#" class="nav-link" aria-label="SumTrack Home">
+        <img src="brand_assets/SUMTRACK LOGO WITH TEXT BESIDE IT.png" alt="SumTrack" class="h-7 sm:h-9 w-auto" />
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#gap" class="nav-link text-sm font-medium text-white/60 hover:text-white">Bridging the Gap</a>
+        <a href="#features" class="nav-link text-sm font-medium text-white/60 hover:text-white">Features</a>
+        <a href="#partner" class="nav-link text-sm font-medium text-white/60 hover:text-white">Partner</a>
+        <a href="#contact" class="nav-link text-sm font-medium text-white/60 hover:text-white">Contact Us</a>
+        <a href="./login/index.html" data-login-link class="btn inline-flex items-center gap-2 bg-brand-red hover:bg-red-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg" style="box-shadow: 0 2px 12px rgba(229,57,53,0.3), 0 1px 3px rgba(0,0,0,0.2);">
+          Log In
+        </a>
+      </div>
+      <button id="mobileMenuBtn" class="md:hidden nav-link text-white/60 p-2" aria-label="Toggle Menu">
+        <svg class="w-6 h-6" id="menuOpen"><use href="#i-menu"/></svg>
+        <svg class="w-6 h-6 hidden" id="menuClose"><use href="#i-x"/></svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-white/[0.06] px-4 sm:px-6 py-4 space-y-3" style="background: rgba(10, 14, 23, 0.95);">
+      <a href="#gap" class="block text-sm font-medium text-white/60 hover:text-white nav-link py-1">Bridging the Gap</a>
+      <a href="#features" class="block text-sm font-medium text-white/60 hover:text-white nav-link py-1">Features</a>
+      <a href="#partner" class="block text-sm font-medium text-white/60 hover:text-white nav-link py-1">Partner</a>
+      <a href="#contact" class="block text-sm font-medium text-white/60 hover:text-white nav-link py-1">Contact Us</a>
+      <a href="./login/index.html" data-login-link class="btn inline-flex items-center gap-2 bg-brand-red text-white text-sm font-semibold px-5 py-2.5 rounded-lg w-full justify-center mt-2" style="box-shadow: 0 2px 12px rgba(229,57,53,0.3);">
+        <svg class="w-4 h-4"><use href="#i-lock"/></svg>
+        Log In
+      </a>
+    </div>
+  </nav>
+
+
+  <!-- ===== HERO ===== -->
+  <section class="relative min-h-screen flex items-end sm:items-center overflow-hidden pt-14 sm:pt-16" id="hero">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+      <img 
+        src="brand_assets/sari sari store.png" 
+        alt="" 
+        class="w-full h-full object-cover object-[70%_center] sm:object-[60%_30%]" 
+      />
+      <!-- Mobile: bottom-heavy overlay so image shows, text readable -->
+      <div class="absolute inset-0 sm:hidden" style="background: linear-gradient(to top, rgba(10,14,23,0.97) 0%, rgba(10,14,23,0.75) 35%, rgba(10,14,23,0.35) 65%, rgba(10,14,23,0.1) 100%);"></div>
+      <!-- Desktop: left gradient so text over image on left -->
+      <div class="hidden sm:block absolute inset-0" style="background: linear-gradient(to right, rgba(35,8,8,0.6) 0%, rgba(60,10,10,0.4) 35%, rgba(90,15,15,0.1) 60%, transparent 80%);"></div>
+      <div class="hidden sm:block absolute inset-0" style="background: linear-gradient(135deg, rgba(240,24,24,0.05) 0%, rgba(240,50,50,0.025) 50%, transparent 100%);"></div>
+      <div class="hidden sm:block absolute inset-0" style="background: linear-gradient(to top, rgba(10,14,23,0.9) 0%, rgba(10,14,23,0.3) 16%, transparent 38%);"></div>
+    </div>
+
+    <!-- Warm golden orbs — hidden on small screens to avoid overflow -->
+    <div class="hidden sm:block absolute top-[10%] left-[8%] w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] rounded-full float-orb pointer-events-none" style="background: radial-gradient(circle, rgba(240,168,24,0.08) 0%, transparent 70%);"></div>
+    <div class="hidden sm:block absolute bottom-[30%] right-[10%] w-[200px] lg:w-[300px] h-[200px] lg:h-[300px] rounded-full float-orb-slow pointer-events-none" style="background: radial-gradient(circle, rgba(229,57,53,0.04) 0%, transparent 70%);"></div>
+
+    <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 pb-20 sm:py-24 lg:py-0 w-full">
+      <div class="max-w-3xl">
+        <h1 class="hero-animate font-montserrat font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.05] mb-4 sm:mb-6" style="letter-spacing: -0.04em;">
+          Empowering Microfinance Through Digital Transformation.
+        </h1>
+
+        <p class="hero-animate-delay text-sm sm:text-lg md:text-xl text-white/70 mb-6 sm:mb-10 max-w-2xl" style="line-height: 1.6;">
+          Secure multi-branch management, automated financial logic, and AI-assisted risk assessment exclusively for Sum Finance Services Corp.
+        </p>
+
+        <div class="hero-animate-delay-2 flex flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <a href="./login/index.html" data-login-link class="glow-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-ember-500 hover:bg-ember-400 text-white font-bold px-4 sm:px-8 py-3.5 sm:py-4 rounded-xl text-xs sm:text-base whitespace-nowrap">
+            Log In
+            <svg class="w-4 h-4 arrow"><use href="#i-arrow-right"/></svg>
+          </a>
+          <a href="#gap" class="btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 border-2 border-white/20 hover:border-white/40 text-white/80 hover:text-white font-semibold px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl text-xs sm:text-base bg-white/[0.04] whitespace-nowrap">
+            Learn More
+          </a>
+        </div>
+        <p class="hero-animate-delay-2 text-[10px] sm:text-xs text-white/40 mt-4 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5"><use href="#i-lock"/></svg>
+          Authorized personnel and clients only.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom marquee -->
+    <div class="absolute bottom-0 left-0 right-0 w-full max-w-[100vw] border-t border-white/[0.06] bg-slate-950/60 py-3 overflow-hidden" style="backdrop-filter: blur(8px);">
+      <div class="marquee-track flex items-center gap-10 whitespace-nowrap text-xs font-semibold tracking-widest uppercase text-white/15">
+        <span>Loan Management</span><span class="text-teal-500/30">●</span>
+        <span>Employee Performance</span><span class="text-ember-500/30">●</span>
+        <span>Risk Assessment</span><span class="text-teal-500/30">●</span>
+        <span>Cloud-Based</span><span class="text-ember-500/30">●</span>
+        <span>32 Branches</span><span class="text-teal-500/30">●</span>
+        <span>250+ Employees</span><span class="text-ember-500/30">●</span>
+        <span>Real-Time Sync</span><span class="text-teal-500/30">●</span>
+        <span>Automated Payroll</span><span class="text-ember-500/30">●</span>
+        <!-- Duplicate for seamless loop -->
+        <span>Loan Management</span><span class="text-teal-500/30">●</span>
+        <span>Employee Performance</span><span class="text-ember-500/30">●</span>
+        <span>Risk Assessment</span><span class="text-teal-500/30">●</span>
+        <span>Cloud-Based</span><span class="text-ember-500/30">●</span>
+        <span>32 Branches</span><span class="text-teal-500/30">●</span>
+        <span>250+ Employees</span><span class="text-ember-500/30">●</span>
+        <span>Real-Time Sync</span><span class="text-teal-500/30">●</span>
+        <span>Automated Payroll</span><span class="text-ember-500/30">●</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== THE CHALLENGE ===== -->
+  <section class="relative py-12 sm:py-20 lg:py-28 grain" id="gap">
+    <div class="relative z-10 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12">
+      <div class="text-center mb-8 sm:mb-16 lg:mb-20">
+        <h2 class="reveal font-montserrat font-extrabold text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 sm:mb-8" style="letter-spacing: -0.03em;">Bridging the Financial Gap</h2>
+        <p class="reveal delay-1 text-white/70 max-w-3xl mx-auto text-base sm:text-lg lg:text-xl">
+          Millions of micro-entrepreneurs rely on informal lending because traditional banks can't reach them. The institutions that do serve them still run on paper, pen, and manual labor. That creates real problems.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-8">
+        <div class="grow-in card-lift rounded-2xl p-6 sm:p-8 lg:p-10" style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 6px 28px rgba(0,0,0,0.25);">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-5 sm:mb-6" style="background: linear-gradient(135deg, rgba(240,168,24,0.2) 0%, rgba(240,168,24,0.1) 100%); border: 1px solid rgba(240,168,24,0.15);">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-amber"><use href="#i-cloud-rain"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-3">Disaster Vulnerability</h3>
+          <p class="text-white/60 text-sm sm:text-[15px]">
+            When a typhoon hits, physical records are gone for good. Passbooks, ledgers, and client files stored in filing cabinets have zero protection against natural disasters.
+          </p>
+        </div>
+
+        <div class="grow-in card-lift rounded-2xl p-6 sm:p-8 lg:p-10" style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 6px 28px rgba(0,0,0,0.25);">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-5 sm:mb-6" style="background: linear-gradient(135deg, rgba(229,57,53,0.16) 0%, rgba(229,57,53,0.08) 100%); border: 1px solid rgba(229,57,53,0.15);">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-red"><use href="#i-shield"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-3">Information Blackouts</h3>
+          <p class="text-white/60 text-sm sm:text-[15px]">
+            Provincial branches operate in isolation. Head office has no way to see what's happening in real time, creating blind spots that can lead to errors, delays, or even fraud.
+          </p>
+        </div>
+
+        <div class="grow-in card-lift rounded-2xl p-6 sm:p-8 lg:p-10" style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 6px 28px rgba(0,0,0,0.25);">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-5 sm:mb-6" style="background: linear-gradient(135deg, rgba(240,168,24,0.2) 0%, rgba(240,168,24,0.1) 100%); border: 1px solid rgba(240,168,24,0.15);">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-amber"><use href="#i-calculator"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-3">Administrative Overload</h3>
+          <p class="text-white/60 text-sm sm:text-[15px]">
+            Computing employee incentives, daily collections, and borrower balances by hand takes weeks every cycle. Staff spend more time on paperwork than actual service.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== FEATURES ===== -->
+  <section class="relative py-12 sm:py-20 lg:py-28 grain" id="features">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full" style="background: radial-gradient(circle, rgba(240,168,24,0.04) 0%, transparent 55%);"></div>
+    </div>
+
+    <div class="relative z-10 max-w-[1600px] mx-auto px-5 sm:px-6 lg:px-10">
+      <div class="text-center mb-10 sm:mb-14 lg:mb-20">
+        <h2 class="reveal font-montserrat font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white mb-4 sm:mb-5" style="letter-spacing: -0.03em;">What SumTrack Can Do</h2>
+        <p class="reveal delay-1 text-white/55 max-w-2xl mx-auto text-base sm:text-lg">
+          Built for real-world microfinance. Every feature solves a specific pain point.
+        </p>
+      </div>
+
+      <!-- Even 2x3 grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+
+        <!-- Automated Risk Assessment -->
+        <div class="reveal card-lift rounded-2xl p-5 sm:p-7 lg:p-9 relative overflow-hidden" style="background: linear-gradient(145deg, rgba(240,168,24,0.08) 0%, rgba(240,168,24,0.02) 50%, rgba(30,41,59,0.3) 100%); border: 1px solid rgba(240,168,24,0.12); box-shadow: 0 4px 24px rgba(240,168,24,0.06), 0 2px 8px rgba(0,0,0,0.15);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(240,168,24,0.15) 0%, rgba(240,168,24,0.06) 100%); border: 1px solid rgba(240,168,24,0.15);">
+            <svg class="w-6 h-6 text-brand-amber"><use href="#i-brain"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Automated Risk Assessment</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            Field collectors write daily notes about each borrower. SumTrack processes those notes through Natural Language Processing and automatically flags accounts as <span class="text-emerald-400 font-semibold">Okay</span>, <span class="text-brand-amber font-semibold">Warning</span>, or <span class="text-brand-red font-semibold">Risky</span>.
+          </p>
+        </div>
+
+        <!-- Automated Payroll -->
+        <div class="reveal delay-1 card-lift rounded-2xl p-5 sm:p-7 lg:p-9" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.18);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(229,57,53,0.1) 0%, rgba(229,57,53,0.05) 100%); border: 1px solid rgba(229,57,53,0.1);">
+            <svg class="w-6 h-6 text-brand-red"><use href="#i-trending"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Automated Payroll</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            Employee incentives are calculated automatically based on collection performance. No more manual spreadsheets, no bias, no delays.
+          </p>
+        </div>
+
+        <!-- Borrower Digital Passbook -->
+        <div class="reveal delay-2 card-lift rounded-2xl p-5 sm:p-7 lg:p-9" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.18);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(240,168,24,0.1) 0%, rgba(240,168,24,0.05) 100%); border: 1px solid rgba(240,168,24,0.1);">
+            <svg class="w-6 h-6 text-brand-amber"><use href="#i-book-open"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Borrower Digital Passbook</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            Clients can view their loan history, payment schedules, and remaining balances anytime through a simple, dedicated portal.
+          </p>
+        </div>
+
+        <!-- Mobile Field Access -->
+        <div class="reveal card-lift rounded-2xl p-5 sm:p-7 lg:p-9" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.18);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(229,57,53,0.08) 0%, rgba(229,57,53,0.04) 100%); border: 1px solid rgba(229,57,53,0.08);">
+            <svg class="w-6 h-6 text-brand-red"><use href="#i-smartphone"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Mobile Field Access</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            Field collectors use their own phones to check daily targets and performance rankings on the go, without needing access to sensitive data.
+          </p>
+        </div>
+
+        <!-- Real-Time Sync -->
+        <div class="reveal delay-1 card-lift rounded-2xl p-5 sm:p-7 lg:p-9" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.18);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(240,168,24,0.1) 0%, rgba(240,168,24,0.05) 100%); border: 1px solid rgba(240,168,24,0.1);">
+            <svg class="w-6 h-6 text-brand-amber"><use href="#i-database"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Real-Time Sync</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            All branch transactions are synced to the cloud in real time, giving head office a live view of cash flow, collections, and disbursements.
+          </p>
+        </div>
+
+        <!-- Secure Data Storage -->
+        <div class="reveal delay-2 card-lift rounded-2xl p-5 sm:p-7 lg:p-9" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.18);">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style="background: linear-gradient(135deg, rgba(240,168,24,0.1) 0%, rgba(240,168,24,0.05) 100%); border: 1px solid rgba(240,168,24,0.1);">
+            <svg class="w-6 h-6 text-brand-amber"><use href="#i-lock"/></svg>
+          </div>
+          <h3 class="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Secure Data Storage</h3>
+          <p class="text-white/50 text-sm sm:text-[15px]">
+            All data is encrypted and backed up daily, ensuring that no information is ever lost, even in the event of a disaster.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== OUR CLIENT ===== -->
+  <section class="relative py-12 sm:py-20 lg:py-28" id="partner">
+    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(180deg, rgba(10,14,23,1) 0%, rgba(12,22,28,1) 50%, rgba(10,14,23,1) 100%);"></div>
+
+    <div class="relative z-10 max-w-[1600px] mx-auto px-5 sm:px-6 lg:px-10 grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
+      <div>
+        <div class="reveal">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-brand-red mb-3 sm:mb-4">
+            <svg class="w-4 h-4"><use href="#i-map-pin"/></svg>
+            Deployment Partner
+          </span>
+        </div>
+        <h2 class="reveal delay-1 font-montserrat font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-4 sm:mb-6" style="letter-spacing: -0.03em;">
+          Sum Finance Services Corp.
+        </h2>
+        <p class="reveal delay-2 text-white/55 text-sm sm:text-[15px] mb-4 sm:mb-6">
+          Established in 1996 and headquartered in Tagbilaran City, Bohol, Sum Finance is a microfinance institution that provides capital to micro-entrepreneurs like sari-sari store owners, carinderia vendors, and small traders who don't have access to traditional banks.
+        </p>
+        <p class="reveal delay-3 text-white/55 text-sm sm:text-[15px] mb-6 sm:mb-10">
+          Over nearly three decades, the institution has grown to <span class="text-white font-semibold">32 satellite branches</span> and <span class="text-white font-semibold">over 250 personnel</span> nationwide. But the systems behind it all are still paper-based: physical passbooks, handwritten index cards, and typewritten ledgers. SumTrack is built to change that.
+        </p>
+
+        <div class="reveal delay-4 flex gap-6 sm:gap-10">
+          <div>
+            <div class="font-montserrat font-extrabold text-2xl sm:text-3xl lg:text-4xl text-brand-amber">32</div>
+            <div class="text-[10px] sm:text-xs text-white/30 mt-1 font-medium">Branches</div>
+          </div>
+          <div>
+            <div class="font-montserrat font-extrabold text-2xl sm:text-3xl lg:text-4xl text-brand-amber">250+</div>
+            <div class="text-[10px] sm:text-xs text-white/30 mt-1 font-medium">Personnel</div>
+          </div>
+          <div>
+            <div class="font-montserrat font-extrabold text-2xl sm:text-3xl lg:text-4xl text-brand-red">1996</div>
+            <div class="text-[10px] sm:text-xs text-white/30 mt-1 font-medium">Established</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal delay-2">
+        <div class="map-wrap">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5946.323517670362!2d123.85500831206431!3d9.63950677909116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33aa4d0032dc6089%3A0x3cdc14f74f9fb477!2sSum%20Building%20Dos!5e1!3m2!1sen!2sph!4v1775584507379!5m2!1sen!2sph"
+            class="w-full h-56 sm:h-72 lg:h-[420px] block border-0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Sum Finance Services Corp., Tagbilaran City">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== CTA / CONTACT ===== -->
+  <section class="relative py-12 sm:py-20 lg:py-28 overflow-hidden grain" id="contact">
+    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(180deg, rgba(10,14,23,1) 0%, rgba(22,14,6,0.6) 50%, rgba(10,14,23,1) 100%);"></div>
+    <!-- Ambient orbs — hidden on mobile to avoid overflow -->
+    <div class="hidden sm:block absolute top-1/2 left-[20%] -translate-y-1/2 w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] rounded-full float-orb pointer-events-none" style="background: radial-gradient(circle, rgba(240,168,24,0.06) 0%, transparent 60%);"></div>
+    <div class="hidden sm:block absolute top-1/2 right-[15%] -translate-y-1/2 w-[250px] lg:w-[400px] h-[250px] lg:h-[400px] rounded-full float-orb-slow pointer-events-none" style="background: radial-gradient(circle, rgba(229,57,53,0.05) 0%, transparent 60%);"></div>
+
+    <div class="relative z-10 max-w-[1600px] mx-auto px-5 sm:px-6 lg:px-10">
+
+      <!-- Header -->
+      <div class="text-center mb-8 sm:mb-12 lg:mb-16">
+        <h2 class="reveal font-montserrat font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-4 sm:mb-5" style="letter-spacing: -0.03em;">Ready to get started?</h2>
+        <p class="reveal delay-1 text-white/45 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto" style="line-height: 1.7;">
+          If you're a Sum Finance employee or borrower, log in to access your account. For inquiries about the service, reach out to Sum Finance directly. For questions about the system, reach out to the development team.
+        </p>
+      </div>
+
+      <!-- 3-path cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto items-stretch">
+
+        <div class="reveal card-lift rounded-2xl p-5 sm:p-7 lg:p-10 flex flex-col h-full relative overflow-hidden" style="background: linear-gradient(145deg, rgba(229,57,53,0.12) 0%, rgba(229,57,53,0.04) 60%, rgba(30,14,14,0.4) 100%); border: 1px solid rgba(229,57,53,0.2); box-shadow: 0 8px 40px rgba(229,57,53,0.08), 0 2px 12px rgba(0,0,0,0.2);">
+          <div class="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl" style="background: linear-gradient(90deg, transparent, rgba(229,57,53,0.6), transparent);"></div>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-6" style="background: linear-gradient(135deg, rgba(229,57,53,0.18) 0%, rgba(229,57,53,0.08) 100%); border: 1px solid rgba(229,57,53,0.2);">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-brand-red"><use href="#i-lock"/></svg>
+          </div>
+          <p class="text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-brand-red mb-2 sm:mb-3">Access Portal</p>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-6">Log In to SumTrack</h3>
+          <div class="mt-auto">
+            <a href="./login/index.html" class="glow-btn inline-flex items-center justify-center w-full gap-3 bg-ember-500 hover:bg-ember-400 text-white font-bold px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-sm transition-all">
+              Log In
+              <svg class="w-4 h-4 arrow"><use href="#i-arrow-right"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="reveal delay-1 card-lift rounded-2xl p-5 sm:p-7 lg:p-10 flex flex-col h-full relative overflow-hidden" style="background: linear-gradient(145deg, rgba(240,168,24,0.07) 0%, rgba(240,168,24,0.02) 60%, rgba(30,22,6,0.3) 100%); border: 1px solid rgba(240,168,24,0.12); box-shadow: 0 8px 40px rgba(240,168,24,0.05), 0 2px 12px rgba(0,0,0,0.2);">
+          <div class="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl" style="background: linear-gradient(90deg, transparent, rgba(240,168,24,0.4), transparent);"></div>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-6" style="background: linear-gradient(135deg, rgba(240,168,24,0.15) 0%, rgba(240,168,24,0.06) 100%); border: 1px solid rgba(240,168,24,0.15);">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-brand-amber"><use href="#i-map-pin"/></svg>
+          </div>
+          <p class="text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-brand-amber mb-2 sm:mb-3">Sum Finance Services Corp.</p>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-6">Get in Touch</h3>
+          <div class="flex gap-2 sm:gap-3 mt-auto">
+            <a href="mailto:sumfinance@example.com" class="btn flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2 border border-brand-amber/30 hover:border-brand-amber/60 text-brand-amber hover:text-amber-300 font-semibold px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm bg-brand-amber/[0.04] hover:bg-brand-amber/[0.08] transition-all">
+              Email
+            </a>
+            <a href="sms:+639XXXXXXXXX" class="btn flex-1 inline-flex items-center justify-center gap-1.5 sm:gap-2 border border-brand-amber/30 hover:border-brand-amber/60 text-brand-amber hover:text-amber-300 font-semibold px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm bg-brand-amber/[0.04] hover:bg-brand-amber/[0.08] transition-all">
+              SMS
+            </a>
+          </div>
+        </div>
+
+        <div class="reveal delay-2 card-lift rounded-2xl p-5 sm:p-7 lg:p-10 flex flex-col h-full relative overflow-hidden" style="background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 8px 40px rgba(0,0,0,0.2), 0 2px 12px rgba(0,0,0,0.15);">
+          <div class="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);"></div>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-6" style="background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.08);">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white/50"><use href="#i-shield"/></svg>
+          </div>
+          <p class="text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-white/35 mb-2 sm:mb-3">Tech Team</p>
+          <h3 class="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-6">Contact the Devs</h3>
+          <div class="mt-auto">
+            <a href="mailto:sumtrack.devs@gmail.com" class="btn inline-flex items-center justify-center w-full gap-2 border border-white/10 hover:border-white/25 text-white/55 hover:text-white font-semibold px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm bg-white/[0.02] hover:bg-white/[0.05] transition-all">
+              Send an Email
+              <svg class="w-4 h-4"><use href="#i-arrow-right"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+  </section>
+
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="relative py-12 border-t border-white/[0.06]" style="background: rgba(8,10,18,0.95);">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 text-center">
+      <div class="flex items-center justify-center mb-4 sm:mb-5">
+        <img src="brand_assets/SUMTRACK LOGO WITH TEXT BESIDE IT.png" alt="SumTrack" class="h-6 sm:h-7 w-auto opacity-35" />
+      </div>
+      <p class="text-xs text-white/25 max-w-xl mx-auto leading-relaxed">
+        &copy; 2026 SumTrack for Sum Finance Services Corp. All Rights Reserved.<br />
+        Holy Name University, College of Engineering and Computer Studies.
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // Scroll reveal — bidirectional
+    // Tracks scroll direction so we only reset an element when it exits above
+    // the viewport WHILE the user is scrolling UP. Scrolling down past an element
+    // leaves it visible. On actual scroll-up, it resets and re-animates.
+    let lastScrollY = window.scrollY;
+    let scrollingUp = false;
+    window.addEventListener('scroll', () => {
+      scrollingUp = window.scrollY < lastScrollY;
+      lastScrollY = window.scrollY;
+    }, { passive: true });
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+          } else if (scrollingUp && e.boundingClientRect.top < 0) {
+            // Exited above viewport while scrolling up — reset for re-entry
+            e.target.classList.remove('visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal, .grow-in').forEach((el) => obs.observe(el));
+
+    // Mobile menu
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const mob = document.getElementById('mobileMenu');
+    const mO = document.getElementById('menuOpen');
+    const mC = document.getElementById('menuClose');
+    menuBtn.addEventListener('click', () => {
+      mob.classList.toggle('hidden');
+      mO.classList.toggle('hidden');
+      mC.classList.toggle('hidden');
+    });
+    mob.querySelectorAll('a[href^="#"]').forEach((l) => {
+      l.addEventListener('click', () => {
+        mob.classList.add('hidden');
+        mO.classList.remove('hidden');
+        mC.classList.add('hidden');
+      });
+    });
+
+    // Sticky nav scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.style.background = 'rgba(10, 14, 23, 0.95)';
+      } else {
+        nav.style.background = 'rgba(10, 14, 23, 0.75)';
+      }
+    });
+  </script>
+
+</body>
+</html>

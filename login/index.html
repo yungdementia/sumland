@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SumTrack</title>
+  
+  <link rel="icon" type="image/png" href="../brand_assets/SUMTRACK LOGO ONLY.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            montserrat: ['Montserrat', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            teal: { 950: '#041F1F', 900: '#082E2E', 800: '#0C4A4E', 700: '#0F5E63', 500: '#17888E' },
+            ember: { 600: '#C43D14', 500: '#D94F1E', 400: '#E8662F' },
+            brand: { amber: '#F0A818' },
+            slate: { 950: '#0A0E17', 900: '#0F172A', 800: '#1E293B' },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html, body { width: 100%; max-width: 100vw; overflow-x: hidden; margin: 0; padding: 0; }
+    
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 30px #0A0E17 inset !important;
+        -webkit-text-fill-color: white !important;
+    }
+
+    #page-curtain {
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none; background: #140804;
+      transform-origin: right center;
+      animation: curtain-out 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+    }
+    @keyframes curtain-out { 0% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+
+    #page-exit-curtain {
+      position: fixed; inset: 0; z-index: 9999; pointer-events: none; background: #140804;
+      transform: scaleX(0); transform-origin: left center;
+    }
+    #page-exit-curtain.active { animation: curtain-in 0.45s cubic-bezier(0.55, 0, 1, 0.45) forwards; }
+    @keyframes curtain-in { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+
+    .form-enter { animation: form-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+    .form-enter-delayed { animation: form-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both; }
+    
+    @keyframes form-rise {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translateX(-2px); }
+      20%, 80% { transform: translateX(3px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+
+    /* Faster & Bigger Floating Animation */
+    @keyframes float-bg-intense {
+      0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+      33% { transform: translate(120px, -150px) scale(1.3) rotate(5deg); }
+      66% { transform: translate(-80px, 80px) scale(0.8) rotate(-5deg); }
+      100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+    }
+
+    .animate-blob { animation: float-bg-intense 8s infinite ease-in-out alternate; }
+    .animation-delay-1000 { animation-delay: 1.5s; }
+    .animation-delay-2000 { animation-delay: 3s; }
+
+    .grain::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat; pointer-events: none; z-index: 0;
+    }
+
+    .spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading .spinner { display: inline-block; }
+    .loading .btn-label { display: none; }
+  </style>
+</head>
+
+<body class="bg-slate-950 font-inter text-slate-300 antialiased min-h-screen flex items-center justify-center w-full max-w-[100vw] overflow-hidden relative grain">
+
+  <div id="page-curtain" aria-hidden="true"></div>
+  <div id="page-exit-curtain" aria-hidden="true"></div>
+
+  <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-20 -left-20 w-[600px] h-[600px] bg-teal-500/20 rounded-full filter blur-[120px] animate-blob"></div>
+    <div class="absolute top-1/4 -right-40 w-[550px] h-[550px] bg-ember-600/15 rounded-full filter blur-[120px] animate-blob animation-delay-1000"></div>
+    <div class="absolute -bottom-40 left-1/3 w-[500px] h-[500px] bg-brand-amber/15 rounded-full filter blur-[120px] animate-blob animation-delay-2000"></div>
+  </div>
+
+  <div class="w-full max-w-md px-6 relative z-10 flex flex-col items-center">
+    
+    <div class="mb-8 form-enter flex flex-col items-center">
+      <img src="../brand_assets/SUMTRACK LOGO WITH TEXT BESIDE IT.png" alt="SumTrack" class="h-10 w-auto drop-shadow-2xl" />
+    </div>
+
+    <div id="loginCard" class="w-full bg-slate-900/70 backdrop-blur-3xl border border-white/[0.08] rounded-2xl p-8 sm:p-10 shadow-2xl form-enter-delayed">
+      
+      <div class="mb-8 text-center">
+        <h1 class="font-montserrat font-bold text-2xl sm:text-3xl text-white mb-2 tracking-tight">Log In</h1>
+        <p class="text-white/50 text-sm">Access the secure employee network.</p>
+      </div>
+
+      <form id="loginForm" novalidate class="space-y-5">
+        
+        <div id="errorBanner" class="hidden mb-5 flex items-start gap-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
+          <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          <span id="errorMsg">Invalid credentials.</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-sm font-medium text-white/80">Company ID</label>
+          <input type="text" id="username" placeholder="e.g. SF-00123" class="block w-full px-4 py-3 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-ember-500 focus:ring-1 focus:ring-ember-500 transition-all sm:text-sm shadow-inner" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-sm font-medium text-white/80">Password</label>
+          <div class="relative">
+            <input type="password" id="password" placeholder="••••••••" class="block w-full pl-4 pr-12 py-3 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-ember-500 focus:ring-1 focus:ring-ember-500 transition-all sm:text-sm shadow-inner" />
+            <button type="button" id="togglePass" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white transition-colors">
+                <svg id="icon-eye" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1 pb-2">
+            <label class="flex items-center text-sm text-white/60 cursor-pointer hover:text-white transition-colors">
+                <input type="checkbox" class="mr-2 rounded border-white/20 bg-slate-950 accent-ember-500" />
+                Remember device
+            </label>
+            <a href="#" class="text-sm font-medium text-ember-500 hover:text-ember-400 transition-colors">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="w-full flex justify-center items-center py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-ember-500 hover:bg-ember-400 transition-all transform active:scale-[0.98] shadow-lg shadow-ember-500/20">
+          <div class="spinner" id="loginSpinner"></div>
+          <span class="btn-label">Secure Login</span>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <a href="../index.html" id="back-to-home" class="inline-flex items-center gap-2 text-sm font-medium text-white/40 hover:text-white transition-colors group">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            Return to website
+        </a>
+      </div>
+
+    </div>
+    
+    <p class="mt-8 text-[11px] text-white/20 uppercase tracking-[0.2em] font-medium text-center">
+        Authorized Personnel and Clients Only
+    </p>
+        <p class="mt-0 text-[14px] text-white/20 uppercase tracking-[0.2em] font-medium text-center">
+        Sum Finance Services Corp.
+    </p>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('togglePass');
+    const passInput = document.getElementById('password');
+    const loginCard = document.getElementById('loginCard');
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorBanner = document.getElementById('errorBanner');
+
+    toggleBtn.addEventListener('click', () => {
+      passInput.type = passInput.type === 'password' ? 'text' : 'password';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+      errorBanner.classList.add('hidden');
+
+      await new Promise(r => setTimeout(r, 1500));
+
+      loginBtn.classList.remove('loading');
+      loginBtn.disabled = false;
+      errorBanner.classList.remove('hidden');
+      
+      loginCard.style.animation = 'none';
+      requestAnimationFrame(() => {
+        loginCard.style.animation = 'shake 0.4s cubic-bezier(0.36,0.07,0.19,0.97)';
+      });
+    });
+
+    function exitTo(url) {
+      const curtain = document.getElementById('page-exit-curtain');
+      curtain.classList.add('active');
+      setTimeout(() => { window.location.href = url; }, 550);
+    }
+    
+    document.getElementById('back-to-home')?.addEventListener('click', (e) => { 
+      e.preventDefault(); exitTo('../index.html'); 
+    });
+  </script>
+</body>
+</html>
